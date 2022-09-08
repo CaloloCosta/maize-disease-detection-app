@@ -6,9 +6,9 @@ from app import app,APP_ROOT
 
 from app.process import predict_img
 
-
 @app.route('/')
 def home():
+    print("got here")
     return render_template('index.html',title='Home')
 
 @app.route('/about')

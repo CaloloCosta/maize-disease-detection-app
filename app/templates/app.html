@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bootstrap demo</title>
+    <script src="https://use.fontawesome.com/00a7b741db.js"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT"
+      crossorigin="anonymous"
+    />
+    <style>
+      .container-fluid {
+        background-color: #7531f9;
+        color: #fff;
+        padding-top: 20px;
+      }
+
+
+
+      /* CSS comes here */
+    #video {
+        width: 320px;
+        height: 240px;
+    }
+    #img-output{
+        width: 320px;
+        height: 240px;
+
+    }
+
+    #photo {
+        border: 1px solid black;
+        width: 320px;
+        height: 240px;
+    }
+
+    #canvas {
+        display: none;
+    }
+
+    .camera {
+        width: 340px;
+        display: inline-block;
+    }
+
+    .output {
+        width: 340px;
+        display: inline-block;
+    }
+
+
+
+    .contentarea {
+        font-size: 16px;
+        font-family: Arial;
+        text-align: center;
+    }
+
+
+    .btn-bd-primary {
+  --bs-btn-font-weight: 600;
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #7531f9;
+  --bs-btn-border-color: #7531f9;
+  --bs-btn-border-radius: .5rem;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: rgb(8, 19, 117);
+  --bs-btn-hover-border-color:rgb(8, 19, 117);
+  --bs-btn-focus-shadow-rgb: rgb(8, 19, 117);
+  --bs-btn-active-color: rgb(8, 19, 117);
+  --bs-btn-active-bg: rgb(8, 19, 117);
+  --bs-btn-active-border-color: rgb(8, 19, 117);
+}
+
+.hide{
+    display: none;
+}
+
+    </style>
+  </head>
+  <body class="container-fluid">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h1 class="h1">maizeckr</h1>
+      </div>
+    </div>
+    <!-- weather section -->
+    <div class="row d-flex justify-content-center align-items-center">
+      <div class="col-md-8 col-lg-6 col-xl-4" style="margin-top: -35px;">
+          <div class="card-body" style="color: #4b515d; border-radius: 15px; background-color: #fff;:">
+            <div class="d-flex flex-column text-center mt-5 mb-4">
+              <h6
+                class="display-4 mb-0 font-weight-bold"
+                style="color: #1c2331"
+              >
+                13°C
+              </h6>
+              <span class="small" style="color: #868b94">Stormy</span>
+            </div>
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1 text-center" style="font-size: 1rem">
+                <i class="fa fa-snowflake-o fa-fw" style="color: #868b94"></i>
+                <span class="ms-1"> 40 km/h |</span>
+                <i class="fa fa-tint fa-fw" style="color: #868b94"></i>
+                <span class="ms-1"> 84% |</span>
+                <i class="fa fa-sun-o fa-fw" style="color: #868b94"></i>
+                <span class="ms-1"> 0.2h </span>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+    <!-- Prediction section -->
+    <div class="row d-flex justify-content-center align-items-center" style="background-color: #fff; color: #1c2331; margin-top: 20px; border-top-left-radius: 30px; border-top-right-radius: 25px; padding-top: 35px">
+        <div class="contentarea">
+            <div class="camera">
+                <video id="video">Video stream not available.</video>
+            </div>
+            <!-- <div><button id="startbutton">Take photo</button></div> -->
+            <canvas id="canvas"></canvas>
+        </div>
+    
+        <script>
+        /* JS comes here */
+        (function() {
+    
+            var width = 320; // We will scale the photo width to this
+            var height = 0; // This will be computed based on the input stream
+    
+            var streaming = false;
+    
+            var video = null;
+            var canvas = null;
+            var photo = null;
+            var startbutton = null;
+    
+            function startup() {
+                video = document.getElementById('video');
+                canvas = document.getElementById('canvas');
+                photo = document.getElementById('img-output');
+                startbutton = document.getElementById('startbutton');
+    
+                navigator.mediaDevices.getUserMedia({
+                        video: true,
+                        audio: false
+                    })
+                    .then(function(stream) {
+                        video.srcObject = stream;
+                        video.play();
+                    })
+                    .catch(function(err) {
+                        console.log("An error occurred: " + err);
+                    });
+    
+                video.addEventListener('canplay', function(ev) {
+                    if (!streaming) {
+                        height = video.videoHeight / (video.videoWidth / width);
+    
+                        if (isNaN(height)) {
+                            height = width / (4 / 3);
+                        }
+    
+                        video.setAttribute('width', width);
+                        video.setAttribute('height', height);
+                        canvas.setAttribute('width', width);
+                        canvas.setAttribute('height', height);
+                        streaming = true;
+                    }
+                }, false);
+    
+                startbutton.addEventListener('click', function(ev) {
+                    takepicture();
+                    ev.preventDefault();
+                }, false);
+    
+                clearphoto();
+            }
+    
+    
+            function clearphoto() {
+                var context = canvas.getContext('2d');
+                context.fillStyle = "#AAA";
+                context.fillRect(0, 0, canvas.width, canvas.height);
+    
+                var data = canvas.toDataURL('image/jpg');
+                photo.setAttribute('src', data);
+            }
+    
+             let takepicture = async () =>{
+                var context = canvas.getContext('2d');
+                if (width && height) {
+                    canvas.width = width;
+                    canvas.height = height;
+                    context.drawImage(video, 0, 0, width, height);
+    
+                    var data = canvas.toDataURL('image/jpg');
+                    photo.setAttribute('src', data);
+                    photo.className = ""
+    
+                    let file = photo.getAttribute('src')
+                    const formData = new FormData();
+    
+                    formData.append('file', file);
+    
+                        const options = {
+                        method: 'POST',
+                        body: formData,
+                        // If you add this, upload won't work
+                        // headers: {
+                        //   'Content-Type': 'multipart/form-data',
+                        // }
+                        };
+                        
+                        let res = await fetch('/upload', options);
+                        window.location = res.url
+                        
+                        
+                } else {
+                    clearphoto();
+                }
+            }
+    
+            window.addEventListener('load', function(e){
+                e.preventDefault()
+                video = document.getElementById('video');
+                canvas = document.getElementById('canvas');
+                photo = document.getElementById('img-output');
+                startbutton = document.getElementById('startbutton');
+    
+                navigator.mediaDevices.getUserMedia({
+                        video: true,
+                        audio: false
+                    })
+                    .then(function(stream) {
+                        video.srcObject = stream;
+                        video.play();
+                    })
+                    .catch(function(err) {
+                        console.log("An error occurred: " + err);
+                    });
+    
+                video.addEventListener('canplay', function(ev) {
+                    if (!streaming) {
+                        height = video.videoHeight / (video.videoWidth / width);
+    
+                        if (isNaN(height)) {
+                            height = width / (4 / 3);
+                        }
+    
+                        video.setAttribute('width', width);
+                        video.setAttribute('height', height);
+                        canvas.setAttribute('width', width);
+                        canvas.setAttribute('height', height);
+                        streaming = true;
+                    }
+                }, false);
+    
+                startbutton.addEventListener('click', function(ev) {
+                    takepicture();
+                    ev.preventDefault();
+                }, false);
+    
+                clearphoto();
+            }, false);
+        })();
+
+        var loadImage = function(event) {
+            var image = document.getElementById('img-output');
+            image.src = URL.createObjectURL(event.target.files[0]);
+            image.className = ""
+        };
+        </script>
+        <div class="row justify-content-center align-items-center text-center" style="margin-top: 20px;">
+            <div class="col-md-3">
+                
+                <!-- <button type="button" class="btn btn-primary btn-bd-primary btn-sm"><i class="fa fa-upload" aria-hidden="true"></i> | Upload an image</button>   -->
+
+
+                <form method="post" action="/upload" enctype="multipart/form-data">
+                    <!-- <div class="form-group">
+                        <input type="file" class="form-control-file" name="img" accept="image/*" id="img"  aria-describedby="fileHelpId">
+                        <button type="file" class="btn btn-primary btn-bd-primary btn-sm"  name="img" accept="image/*" id="img"><i class="fa fa-upload" aria-hidden="true"></i> | Upload an image</button>  
+                    </div> -->
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="inputGroupFile01" style="background-color:#7531f9; color: #fff"><i class="fa fa-upload" aria-hidden="true"></i></label>
+                        <input type="file" id ="file-form" class="form-control" id="inputGroupFile01" name="img" accept="image/*" id="img"  aria-describedby="fileHelpId" onchange="loadImage(event)">
+                        <button type="button" id="startbutton" class="btn btn-primary btn-bd-primary btn-sm"><i class="fa fa-camera" aria-hidden="true"></i></button> 
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-bd-primary btn-sm"><i class="fa fa-flask" aria-hidden="true"></i> | Examine</button> 
+            
+                </form>
+            </div> 
+        </div>
+
+        <!-- output section -->
+        <div class="row justify-content-center align-items-center">
+            <div class="col-md-12 align-items-center" style="padding: 0; text-align: center; margin-top: 20px;">
+                <img id="img-output" alt="" class="hide">  
+            </div>
+        </div>
+        
+        <!-- Information section -->
+        <div class="row d-flex justify-content-center align-items-center" style="margin-top: 20px;">
+            <div class="col-md-8 col-lg-6 col-xl-4" style="margin-top: -35px;">
+                <div class="card-body" style="color: #4b515d; border-radius: 15px; background-color: #fff;">
+                  <div class="d-flex flex-column text-center mt-5 mb-4">
+                    <h6
+                      class="display-4 mb-0 font-weight-bold"
+                      style="color: #1c2331"
+                    >
+                      Examine maize crop
+                    </h6>
+                    <p style="color: #868b94">Take a photo or upload an image of maize leave, the app will examine either if the leave is healthy, infected with faw or having msv.</p>
+                  </div>
+                </div>
+            </div>
+          </div>
+        
+      </div>
+    
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
+
+<!-- #4b40c6 -->
