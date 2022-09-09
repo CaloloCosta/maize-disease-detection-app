@@ -1,6 +1,5 @@
 # from imageai.Prediction import ImagePrediction
 import os
-from pydoc import describe
 from app import APP_ROOT
 import tensorflow as tf
 import numpy as np

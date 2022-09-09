@@ -16,22 +16,10 @@ from werkzeug.utils import redirect
 
 from app.process import predict_img
 
-@app.route('/')
-def home():
-    print("got here")
-    return render_template('index.html',title='Home')
-
-@app.route('/about')
-def about():
-    return render_template('about.html',title='About',name='Passed by variable')
-
 @app.route("/predict")
 def predict():
     return render_template("predict.html",title="Predict")
 
-@app.route("/take")
-def take():
-    return render_template("take.html",title="Take")
 
 @app.route("/upload",methods=["GET","POST"])
 def upload():
