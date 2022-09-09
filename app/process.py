@@ -1,7 +1,9 @@
 # from imageai.Prediction import ImagePrediction
 import os
 from app import APP_ROOT
-import tensorflow as tf
+# import tensorflow as tf
+
+from tensorflow import keras,expand_dims,nn
 import numpy as np
 from PIL import Image
  
@@ -15,14 +17,14 @@ print(APP_ROOT)
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 static_loc=os.path.join(APP_ROOT,'static/')
-new_model = tf.keras.models.load_model(os.path.join(APP_ROOT,'static/','maize_model.h5'))
+new_model = keras.models.load_model(os.path.join(APP_ROOT,'static/','maize_model.h5'))
 def predict_img(filename):
-    img = tf.keras.utils.load_img(os.path.join(APP_ROOT,'static/',filename), target_size=(180,180))
-    img_array = tf.keras.utils.img_to_array(img)
-    img_array = tf.expand_dims(img_array, 0) # Create a batch
+    img = keras.utils.load_img(os.path.join(APP_ROOT,'static/',filename), target_size=(180,180))
+    img_array = keras.utils.img_to_array(img)
+    img_array = expand_dims(img_array, 0) # Create a batch
     predictions = new_model.predict(img_array)
     print(predictions)
-    score = tf.nn.softmax(predictions[0])
+    score = nn.softmax(predictions[0])
     # print(score)
     class_names = ['FAW', 'MSV', 'healthy', 'unknown']
     print("This image most likely belongs to {} with a {:.2f} percent confidence.".format(class_names[np.argmax(score)], 100 * np.max(score)))
@@ -42,12 +44,12 @@ def predict_img(filename):
     return res
 
 # def predict_img(filename):
-#     tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+#     compat.v1.logging.set_verbosity(compat.v1.logging.ERROR)
 #     target=os.path.join(APP_ROOT,'temp/'+filename) #location of image present in temp directory
 #     prediction = ImagePrediction()
 #     prediction.setModelTypeAsResNet()
 
-#     tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+#     compat.v1.logging.set_verbosity(compat.v1.logging.ERROR)
 
 #     prediction.setModelPath(os.path.join(static_loc, "resnet50_weights_tf_dim_ordering_tf_kernels.h5"))
 #     prediction.loadModel()
