@@ -10,12 +10,13 @@ print(APP_ROOT)
 
 
 
-new_model = tf.keras.models.load_model('/home/carlos/Documents/indabax2022/maize-disease-detection-app/app/maize_model.h5')
+
 
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 static_loc=os.path.join(APP_ROOT,'static/')
+new_model = tf.keras.models.load_model(os.path.join(APP_ROOT,'static/','maize_model.h5'))
 def predict_img(filename):
     img = tf.keras.utils.load_img(os.path.join(APP_ROOT,'static/',filename), target_size=(180,180))
     img_array = tf.keras.utils.img_to_array(img)
@@ -27,9 +28,9 @@ def predict_img(filename):
     class_names = ['FAW', 'MSV', 'healthy', 'unknown']
     print("This image most likely belongs to {} with a {:.2f} percent confidence.".format(class_names[np.argmax(score)], 100 * np.max(score)))
     description = {
-        "FAW": "to fix this...",
-        "MSV": "DO THIS....",
-        "healthy": "Keep on treating it well, the leave is a ealthy condition",
+        "FAW": "Causes: Geminivirus trasmitted by leafhoppers Symptoms:pale,circular spots on younger leaves Treatment:Insecticide (recommeded pesticide:carbofuran) and farming during early season",
+        "MSV": "Causes: Burrowing into maize ears by Fall armyworm larvae Symptoms:ragged holes in the leaves Treatment: Pesticides (recommeded pesticide:halofenozide)",
+        "healthy": "The leaf is in a healthy condition,keep on treating it well",
         "unknown": "Please upload an image of a maize leave."
 
     }

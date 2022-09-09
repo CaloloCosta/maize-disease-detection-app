@@ -28,8 +28,29 @@
 		width: 300px;
 		height: 300px;
 		border-radius: 300px;
-		border: #57e5ae solid 5px;
 	  }
+	  .btn-bd-primary {
+  --bs-btn-font-weight: 600;
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #7531f9;
+  --bs-btn-border-color: #7531f9;
+  --bs-btn-border-radius: .5rem;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: rgb(8, 19, 117);
+  --bs-btn-hover-border-color:rgb(8, 19, 117);
+  --bs-btn-focus-shadow-rgb: rgb(8, 19, 117);
+  --bs-btn-active-color: rgb(8, 19, 117);
+  --bs-btn-active-bg: rgb(8, 19, 117);
+  --bs-btn-active-border-color: rgb(8, 19, 117);
+}
+
+	.healthy{
+		border: #57e5ae solid 5px;
+	}
+	.sick{
+		border: red solid 5px;
+	}
+	
     </style>
   </head>
   <body class="container-fluid">
@@ -45,13 +66,14 @@
 		</div>
 	</div>
 		<!-- Information section -->
-       <div class="row d-flex justify-content-center align-items-center" style="background-color: #fff; color: #1c2331; margin-top: 20px; border-top-left-radius: 30px; border-top-right-radius: 25px; padding-top: 30px; padding-bottom: 20px;">
+       <div class="row d-flex justify-content-center align-items-center" style="background-color: #fff; color: #1c2331; margin-top: 20px; border-radius: 25px; padding-top: 30px; padding-bottom: 20px;">
             <div class="col-md-8 col-lg-6 col-xl-4 text-center" style="margin-top: -35px;">
                 <div class="card-body" style="color: #4b515d; border-radius: 15px; background-color: #fff;">
                   <div class="d-flex flex-column text-center mt-5 mb-4">
                     <h6
                       class="display-4 mb-0 font-weight-bold"
                       style="color: #1c2331"
+					  id = "status"
                     >
 					  {{results["class"]}}
                     </h6>
@@ -70,6 +92,23 @@
       integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
       crossorigin="anonymous"
     ></script>
+
+	<script>
+		let border = () =>{
+			
+			
+		if (document.getElementById("status").textContent.includes("healthy")){
+			document.getElementById("img-output").className = "healthy"
+		}
+		else{
+			document.getElementById("img-output").className = "sick"
+		}
+	}
+		window.addEventListener('load',border)
+
+		
+
+	</script>
   </body>
 </html> 
 

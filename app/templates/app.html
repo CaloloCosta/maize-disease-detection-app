@@ -95,19 +95,18 @@
               <h6
                 class="display-4 mb-0 font-weight-bold"
                 style="color: #1c2331"
-              >
+              id="temp">
                 13°C
               </h6>
-              <span class="small" style="color: #868b94">Stormy</span>
+              <span class="small" style="color: #868b94" id="desc">Stormy</span>
             </div>
             <div class="d-flex align-items-center">
               <div class="flex-grow-1 text-center" style="font-size: 1rem">
                 <i class="fa fa-snowflake-o fa-fw" style="color: #868b94"></i>
-                <span class="ms-1"> 40 km/h |</span>
+                <span class="ms-1" id = "pressure"></span>
                 <i class="fa fa-tint fa-fw" style="color: #868b94"></i>
-                <span class="ms-1"> 84% |</span>
-                <i class="fa fa-sun-o fa-fw" style="color: #868b94"></i>
-                <span class="ms-1"> 0.2h </span>
+                <span class="ms-1" id="humidity"></span>
+                
               </div>
             </div>
           </div>
@@ -272,6 +271,34 @@
             image.src = URL.createObjectURL(event.target.files[0]);
             image.className = ""
         };
+
+        function celsius(n){
+    const c = (parseFloat(n)-32)*(5/9);
+    return Math.floor(c,0);
+  }
+        // weather data
+        let getData = async(city) => {
+            let key = "d850d2105f7747e173559bf224f7c2f8"
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&APPID=${key}&units=imperial`;
+            const response = await fetch(url);
+            const data = await response.json();
+            let obj = {
+            main: data.main,
+            temp: data.weather,
+            mes: data.sys,
+            name: data.name,
+            weather: data.weather
+            };
+            console.log(obj)
+
+            document.getElementById("temp").textContent = `${celsius(obj.main.temp)}°C`
+            document.getElementById("desc").textContent = `${obj.name} | ${obj.temp[0].description}`
+            document.getElementById("pressure").textContent = `${obj.main.pressure}`
+            document.getElementById("humidity").textContent = `${obj.main.humidity} `
+            return obj;
+        }
+
+        window.addEventListener('load',getData("windhoek"))
         </script>
         <div class="row justify-content-center align-items-center text-center" style="margin-top: 20px;">
             <div class="col-md-3">
